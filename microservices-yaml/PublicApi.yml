@@ -1,0 +1,273 @@
+openapi: 3.0.0
+servers:
+  - description: Server configurations
+    url: '{host}:{port}'
+    variables:
+      host:
+        default: http://localhost
+      port:
+        default: '1323'
+info:
+  description: This includes Endpoints for getting details to public using Tokens
+  version: "1.0.0"
+  title: CGraph Public API
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: graph
+    description: get the Details of the graph.
+  - name: search
+    description: Search domains and keywords.
+paths:
+  /graphsearch/<term>/<token>:
+    get:
+      tags:
+        - graph
+      summary: Retrieve the data of the selected node for past week
+      operationId: getDetails
+      description: |
+        By passing in the appropriate options, you can data of the selected node for past week
+      parameters:
+        - in: path
+          name: term
+          schema:
+            type: string
+          description: Search String
+        - in: path
+          name: token
+          schema:
+            type: string
+          description: Token generated from the web application
+          
+        - in: header         
+          name: Authorization
+          schema:
+            type: string
+            format: string
+          required: true  
+      responses:
+        '200':
+          description: Nodes and Egdges
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/graphResponseItem'
+              
+        '400':
+          description: 'Bad Requst'
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+        
+        '500':
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+
+
+  /search/<term>/<page>/<token>:
+    get:
+      tags:
+        - search
+      summary: Retrieve the data of the selected node for past week
+      operationId: getDetails
+      description: |
+        By passing in the appropriate options, you can data of the selected node for past week
+      parameters:
+        - in: path
+          name: term
+          schema:
+            type: string
+          description: Search String
+        - in: path
+          name: page
+          schema:
+            type: string
+          description: Pagination page
+        - in: path
+          name: token
+          schema:
+            type: string
+          description: Token generated from the web application
+          
+        - in: header         
+          name: Authorization
+          schema:
+            type: string
+            format: string
+          required: true  
+      responses:
+        '200':
+          description: Graph node detail
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/serchResponse'              
+        '400':
+          description: 'Bad Requst'
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+        
+        '500':
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+components:
+  schemas:
+    serchResponse:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 350
+        page:
+          type: integer
+          example: 0
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              example:
+                $ref: '#/components/schemas/graphNodeDetailResponse'
+    graphResponseItem:
+      type: object
+      required:
+        - nodes
+        - links
+      properties:
+        nodes:
+          type: object
+          properties:
+            count:
+              type: integer 
+            result:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "apex/vpn.ac"
+                  type:
+                    type: string
+                    example: "apex"
+        links:
+          type: object
+          properties:
+            count:
+              type: integer
+            result:
+              type: array
+              items:
+                type: object
+                properties:
+                  source:
+                    type: string
+                  target:
+                    type: string
+
+    graphNodeDetailResponse:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "apex_1602018000/github.com."
+        _key:
+          type: string
+          example: "github.com."
+        avg:
+          type: string
+          example: "127"
+        dal:
+          type: string
+          example: "120"
+        maxmind:
+          type: object
+          example: 
+            $ref: '#/components/schemas/maxmindResponse'
+        positives:
+          type: string
+          example: "2"
+        rrtype:
+          type: string
+          example: "A1"
+        time_first:
+          type: string
+          example: "1602058500"
+        time_last:
+          type: string
+          example: "1602114505"
+        ts:
+          type: string
+          example: "1602018000"
+    maxmindResponse:
+      type: object
+      properties:
+        area_code:
+          type: integer
+          example: 0
+        asn:
+          type: string
+          example: "AS30148 SUCURI-SEC"
+        city:
+          type: string
+          example: "Menifee"
+        country_code:
+          type: string
+          example: "US"
+        country_code3:
+          type: string
+          example: "US"
+        country_name:
+          type: string
+          example: "United States"
+        dma_code:
+          type: integer
+          example: 803
+        latitude:
+          type: number
+          format: float
+          example: 33.664
+        longitude:
+          type: number
+          format: float
+          example: 31.664
+        metro_code:
+          type: integer
+          example: 803
+        postal_code:
+          type: string
+          example: "81700"
+        region:
+          type: string
+          example: "06"
+        region_name:
+          type: string
+          example: "US"
+        time_zone:
+          type: string
+          example: "America"
+          
+    error:
+      required:
+        - code
+        - error
+      properties:
+        code:
+          type: string
+          example: CAR-500
+        error:
+          type: string
+          example: error message
+      type: object
+      description: response for errors        
+    
