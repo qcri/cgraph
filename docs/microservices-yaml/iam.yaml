@@ -1,0 +1,373 @@
+openapi: 3.0.0
+servers:
+  - description: Server configurations
+    url: '{host}:{port}'
+    variables:
+      host:
+        default: localhost
+      port:
+        default: '8000'
+info:
+  description: This is an identity and acess managemnt API.
+  version: "1.0.0"
+  title: IAM Microservice
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: user
+    description: user calls
+paths:
+  /signin:
+    post:
+      tags:
+        - user
+      summary: signin to the system
+      operationId: signin
+      description: |
+        By passing in the appropriate options, you can get the token to acess the secured apis
+      responses:
+        '200':
+          description: Login sucessfull
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/SigninResponseItem'
+        '400':
+          description: Bad input parameter
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SigninRequestItem'
+  /signup:
+    post:
+      tags:
+        - user
+      summary: register to the system
+      operationId: signup
+      description: Adds an user to the system
+      responses:
+        '201':
+          description: user created
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/SignupResponseItem'
+        '400':
+          description: 'Invalid input, object invalid'
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+        '409':
+          description: An existing username or Email already exists
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+        '500':
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/SignupRequestItem'
+        description: User to add to system
+  /sendVerifyemail:
+    post:
+      tags:
+        - user
+      summary: send email verfication
+      operationId: sendVerifyemail
+      description: send the verification email to user.
+      responses:
+        '200':
+          description: Email sent sucess
+          content:
+            application/json:
+              schema:
+                type: string
+                example : Email sent sucessfull
+              
+        '400':
+          description: 'Invalid input, not registerd email'
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+        '500':
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/sendVerifyEmainRequestItem'
+        description: Email to Send the verification email
+        
+  /verifyemail:
+    get:
+      tags:
+        - user
+      summary: Make the user verified.
+      operationId: verifyemail
+      description: Make the user verified in the system.
+      parameters:
+        - in: query
+          name: hash
+          schema:
+            type: string
+          description: Hash code of the user in the system
+        - in: query
+          name: email
+          schema:
+            type: string
+          description: The email of the user
+      responses:
+        '200':
+          description: Password reset sucessfull
+          content:
+            application/json:
+              schema:
+                type: string
+                example : Verification Successful
+              
+        '400':
+          description: 'Invalid input, not registerd email'
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+        '401':
+          description: 'Invalid password token'
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+        '500':
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+        
+  /forgotpassword:
+    post:
+      tags:
+        - user
+      summary: send password reset link.
+      operationId: forgotpassword
+      description: send the password reset link to the users email.
+      responses:
+        '200':
+          description: Email sent sucess
+          content:
+            application/json:
+              schema:
+                type: string
+                example : Email sent sucessfull
+              
+        '400':
+          description: 'Invalid input, not registerd email'
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+        '500':
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/sendVerifyEmainRequestItem'
+        description: Email to Send the reset password link
+  /resetpassword:
+    post:
+      tags:
+        - user
+      summary: Update the password.
+      operationId: resetpassword
+      description: Reset the password of the user in the system.
+      responses:
+        '200':
+          description: Password reset sucessfull
+          content:
+            application/json:
+              schema:
+                type: string
+                example : Password Reset Successfully
+              
+        '400':
+          description: 'Invalid input, not registerd email'
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+        '401':
+          description: 'Invalid password token'
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+        '500':
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/resetPasswordRequestItem'
+        description: Reset password request details.
+components:
+  schemas:
+    SigninRequestItem:
+      type: object
+      required:
+        - email
+        - password
+      properties:
+        email:
+          type: string
+          format: email
+          example: abc@abc.com
+        password:
+          type: string
+          example: password
+    SigninResponseItem:
+      type: object
+      required:
+        - email
+        - token
+      properties:
+        email:
+          type: string
+          format: email
+          example: abc@abc.com
+        token:
+          type: string
+          example: hsgasabashbahsjnjasnkjasjasjasnjmaa
+    
+    SignupRequestItem:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - username
+        - telephone
+        - company
+        - email
+        - password
+      properties:
+        firstName:
+          type: string
+          example: joe
+        lastName:
+          type: string
+          example: master
+        username:
+          type: string
+          example: joeM
+        telephone:
+          type: string
+          example: 01245689
+        company:
+          type: string
+          example: testOrg
+        email:
+          type: string
+          format: email
+          example: joe@abc.com
+        password:
+          type: string
+          example: password
+    
+    SignupResponseItem:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - username
+        - email
+      properties:
+        firstName:
+          type: string
+          example: joe
+        lastName:
+          type: string
+          example: master
+        username:
+          type: string
+          example: joeM
+        email:
+          type: string
+          format: email
+          example: joe@abc.com1
+    
+    sendVerifyEmainRequestItem:
+      type: object
+      required:
+        - email
+      properties:
+        email:
+          type: string
+          format: email
+          example: abc@abc.com     
+    resetPasswordRequestItem:
+      required:
+        - password
+        - passwordToken
+        - emain
+        - confirmPassword
+      properties:
+        password:
+          type: string
+          example: password
+        confirmPassword:
+          type: string
+          example: password
+        passwordToken:
+          type: string
+          example: dnsjdnsmkajuRvdgs
+        email:
+          type: string
+          format: email
+          example: abc@abc.com 
+      type: object
+    error:
+      required:
+        - code
+        - error
+      properties:
+        code:
+          type: string
+          example: CAR-500
+        error:
+          type: string
+          example: error message
+      type: object
+      description: response for errors

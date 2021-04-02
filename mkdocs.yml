@@ -1,0 +1,29 @@
+site_name: cGraph
+nav:
+    - Home: index.md
+    - Quick Start: 
+        - Search: 
+            - Search Home: quick-start/search/search.md
+            - Filter: quick-start/search/filter.md
+            - Color Codes : quick-start/search/color.md
+        - Graph: 
+            - Interface : quick-start/graph/interface.md
+            - Network Graph: 
+                - Graph: quick-start/graph/network.md
+                - Color Codes : quick-start/graph/networkcolor.md
+            - Timeline Graph: 
+                - Graph: quick-start/graph/timeline.md
+                - Color Codes : quick-start/graph/timelinecolor.md
+            - Inference Graph : 
+                - Graph: quick-start/graph/inference.md
+                - Color Codes : quick-start/graph/inferencecolor.md
+            - Layouts: quick-start/graph/layout.md
+        - Token Manager: tokenManager.md
+    - Microservices: 
+        - IAM Microservice: microservices-md/iam.md
+        - Graph Microservice: microservices-md/graph.md
+        - Inference Microservice: microservices-md/inference.md
+        - Detail & Search Microservice: microservices-md/detail.md
+        - Public API: microservices-md/PublicApi.md
+theme:
+    name: material

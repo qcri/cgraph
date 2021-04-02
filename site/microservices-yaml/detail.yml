@@ -1,0 +1,431 @@
+openapi: 3.0.0
+servers:
+  - description: Server configurations
+    url: '{host}:{port}'
+    variables:
+      host:
+        default: http://localhost
+      port:
+        default: '1323'
+info:
+  description: This includes Endpoints for getting details and to sear the domains.
+  version: "1.0.0"
+  title: Detail & Search Microservice
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: detail
+    description: get the Details of the searched results.
+  - name: search
+    description: Search domains and keywords.
+paths:
+  /maxmineDomain/<date>/<node>:
+    get:
+      tags:
+        - detail
+      summary: Retrieve the Nodes and Edges
+      operationId: apex
+      description: |
+        By passing in the appropriate options, you can get the maxmind data of the node.
+      parameters:
+        - in: path
+          name: date
+          schema:
+            type: string
+          description: Dae to retireve daa
+        - in: path
+          name: node
+          schema:
+            type: string
+          description: Name of the Node
+
+      responses:
+        '200':
+          description: Maxmine Details
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/maxmindResponse'
+              
+        '400':
+          description: 'Bad Requst'
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+        
+        '500':
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'        
+  /graphNodeDetails/<graphType>/<node>/<timestamp>:
+    get:
+      tags:
+        - detail
+      summary: Retrieve the data of the selected node
+      operationId: graphNodeDetail
+      description: |
+        By passing in the appropriate options, you can data of the selected node
+      parameters:
+        - in: path
+          name: graphType
+          schema:
+            type: string
+          description: Graph Type
+        - in: path
+          name: node
+          schema:
+            type: string
+          description: Name of the Node
+        - in: path
+          name: timestamp
+          schema:
+            type: integer
+          description: timestamp of the node       
+      responses:
+        '200':
+          description: Graph node detail
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/graphNodeDetailResponse'
+              
+        '400':
+          description: 'Bad Requst'
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+        
+        '500':
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+
+
+  /getDetails/<graphType>/<node>:
+    get:
+      tags:
+        - detail
+      summary: Retrieve the data of the selected node for past week
+      operationId: getDetails
+      description: |
+        By passing in the appropriate options, you can data of the selected node for past week
+      parameters:
+        - in: path
+          name: graphType
+          schema:
+            type: string
+          description: Graph Type
+        - in: path
+          name: node
+          schema:
+            type: string
+          description: Name of the Node      
+      responses:
+        '200':
+          description: Graph node detail
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/getDetailsResponse'              
+        '400':
+          description: 'Bad Requst'
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+        
+        '500':
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'        
+  /graphNodeAlexa/<node>:
+    get:
+      tags:
+        - detail
+      summary: Retrieve the data of the alexa rank of the Past year
+      operationId: graphNodeAlexa
+      description: |
+        By passing in the appropriate options, you can get the data alexa rank of the past year
+      parameters:
+        - in: path
+          name: node
+          schema:
+            type: string
+          description: Name of the Node      
+      responses:
+        '200':
+          description: Graph node detail
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/getNodeAlexaResponse'
+              
+        '400':
+          description: 'Bad Requst'
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+        
+        '500':
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'        
+
+  /graphNodeVT/<node>:
+    get:
+      tags:
+        - detail
+      summary: Retrieve the data of the VT count of the past month
+      operationId: graphNodeAlexa
+      description: |
+        By passing in the appropriate options, you can get the data VT count of the past month
+      parameters:
+        - in: path
+          name: node
+          schema:
+            type: string
+          description: Name of the Node      
+      responses:
+        '200':
+          description: Graph node detail
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/getNodeVTResponse'
+              
+        '400':
+          description: 'Bad Requst'
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+        
+        '500':
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+
+  /search/<term>/<page>/<filter>/<order>/<type>:
+    get:
+      tags:
+        - search
+      summary: Retrieve the data of the selected node for past week
+      operationId: getDetails
+      description: |
+        By passing in the appropriate options, you can data of the selected node for past week
+      parameters:
+        - in: path
+          name: term
+          schema:
+            type: string
+          description: Search String
+        - in: path
+          name: page
+          schema:
+            type: string
+          description: Pagination page
+        - in: path
+          name: filter
+          schema:
+            type: string
+          description: Filter type (alexa,vt,fistSeen,lastSeen)
+        - in: path
+          name: order
+          schema:
+            type: string
+          description: Sorting type (ASC/DESC)  
+        - in: path
+          name: type
+          schema:
+            type: string
+          description: Name of the Node     
+      responses:
+        '200':
+          description: Graph node detail
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/serchResponse'              
+        '400':
+          description: 'Bad Requst'
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+        
+        '500':
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+components:
+  schemas:
+    maxmindResponse:
+      type: object
+      properties:
+        area_code:
+          type: integer
+          example: 0
+        asn:
+          type: string
+          example: "AS30148 SUCURI-SEC"
+        city:
+          type: string
+          example: "Menifee"
+        country_code:
+          type: string
+          example: "US"
+        country_code3:
+          type: string
+          example: "US"
+        country_name:
+          type: string
+          example: "United States"
+        dma_code:
+          type: integer
+          example: 803
+        latitude:
+          type: number
+          format: float
+          example: 33.664
+        longitude:
+          type: number
+          format: float
+          example: 31.664
+        metro_code:
+          type: integer
+          example: 803
+        postal_code:
+          type: string
+          example: "81700"
+        region:
+          type: string
+          example: "06"
+        region_name:
+          type: string
+          example: "US"
+        time_zone:
+          type: string
+          example: "America"
+        
+        
+    graphNodeDetailResponse:
+      type: object
+      properties:
+        _id:
+          type: string
+          example: "apex_1602018000/github.com."
+        _key:
+          type: string
+          example: "github.com."
+        avg:
+          type: string
+          example: "127"
+        dal:
+          type: string
+          example: "120"
+        maxmind:
+          type: object
+          example: 
+            $ref: '#/components/schemas/maxmindResponse'
+        positives:
+          type: string
+          example: "2"
+        rrtype:
+          type: string
+          example: "A1"
+        time_first:
+          type: string
+          example: "1602058500"
+        time_last:
+          type: string
+          example: "1602114505"
+        ts:
+          type: string
+          example: "1602018000"
+
+    getDetailsResponse:
+      type: array
+      items:
+          type: object
+          properties:
+            0: 
+              $ref: '#/components/schemas/graphNodeDetailResponse'
+            1: 
+              $ref: '#/components/schemas/graphNodeDetailResponse'
+    
+    getNodeAlexaResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          date:
+            type: string
+            example: "2019-05-01"
+          rank:
+            type: integer
+            example: 120
+
+    getNodeVTResponse:
+      type: array
+      items:
+        type: object
+        properties:
+          scan_date:
+            type: string
+            example: "2019-05-01"
+          positives:
+            type: integer
+            example: 2
+          total:
+            type: integer
+            example: 70
+
+
+    serchResponse:
+      type: object
+      properties:
+        count:
+          type: integer
+          example: 350
+        page:
+          type: integer
+          example: 0
+        data:
+          type: array
+          items:
+            type: object
+            properties:
+              example:
+                $ref: '#/components/schemas/graphNodeDetailResponse'
+
+
+    error:
+      required:
+        - code
+        - error
+      properties:
+        code:
+          type: string
+          example: CAR-500
+        error:
+          type: string
+          example: error message
+      type: object
+      description: response for errors        
+    

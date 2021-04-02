@@ -1,0 +1,118 @@
+openapi: 3.0.0
+servers:
+  - description: Server configurations
+    url: '{host}:{port}'
+    variables:
+      host:
+        default: http://localhost
+      port:
+        default: '5000'
+info:
+  description: This is Inference Graph Rendering Microservice.
+  version: "1.0.0"
+  title: Inference Microservice
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: Inference
+    description: Inference Traversal  
+paths:
+  /getinf/{startNode}/{depth}/{graphType}:
+    get:
+      tags:
+        - Inference
+      summary: Retrieve the Nodes and Edges with the inference values
+      operationId: inference
+      description: |
+        By passing in the appropriate options, you can get the nodes and the edges of the graph with inference values
+      parameters:        
+        - in: path
+          name: startNode
+          schema:
+            type: string
+          description: Name of the Start Node
+        - in: path
+          name: depth
+          schema:
+            type: integer
+          description: depth of the graph  
+        - in: path
+          name: graphType
+          schema:
+            type: string
+          description: Graph Type     
+      responses:
+        '200':
+          description: Nodes and Egdges
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/graphResponseItem'
+              
+        '400':
+          description: 'Bad Requst'
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+        
+        '500':
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'        
+  
+components:
+  schemas:
+    graphResponseItem:
+      type: object
+      required:
+        - nodes
+        - links
+      properties:
+        nodes:
+          type: object
+          properties:
+            count:
+              type: integer 
+            result:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "apex/vpn.ac"
+                  type:
+                    type: string
+                    example: "apex"
+        links:
+          type: object
+          properties:
+            count:
+              type: integer
+            result:
+              type: array
+              items:
+                type: object
+                properties:
+                  source:
+                    type: string
+                  target:
+                    type: string
+    error:
+      required:
+        - code
+        - error
+      properties:
+        code:
+          type: string
+          example: CAR-500
+        error:
+          type: string
+          example: error message
+      type: object
+      description: response for errors        
+    

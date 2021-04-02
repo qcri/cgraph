@@ -1,0 +1,201 @@
+openapi: 3.0.0
+servers:
+  - description: Server configurations
+    url: '{host}:{port}'
+    variables:
+      host:
+        default: http://localhost
+      port:
+        default: '1323'
+info:
+  description: This is Graph Rendering Microservice.
+  version: "1.0.0"
+  title: Graph Microservice
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+tags:
+  - name: Graph
+    description: Graph Traversal  
+paths:
+  /graph:
+    get:
+      tags:
+        - Graph
+      summary: Retrieve the Nodes and Edges
+      operationId: apex
+      description: |
+        By passing in the appropriate options, you can get the nodes and the edges of the graph
+      parameters:
+        - in: query
+          name: graphType
+          schema:
+            type: string
+          description: Graph Type
+        - in: query
+          name: startNode
+          schema:
+            type: string
+          description: Name of the Start Node
+        - in: query
+          name: depth
+          schema:
+            type: integer
+          description: depth of the graph       
+      responses:
+        '200':
+          description: Nodes and Egdges
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/graphResponseItem'
+              
+        '400':
+          description: 'Bad Requst'
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+        
+        '500':
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'        
+  /timeline:
+    get:
+      tags:
+        - Graph
+      summary: Retrieve the Timeline of the starting node
+      operationId: apex
+      description: |
+        By passing in the appropriate options, you can get the nodes and the edges of expanded graph
+      parameters:
+        - in: query
+          name: graphType
+          schema:
+            type: string
+          description: Graph Type
+        - in: query
+          name: startNode
+          schema:
+            type: string
+          description: Name of the Start Node
+        - in: query
+          name: depth
+          schema:
+            type: integer
+          description: depth of the graph       
+      responses:
+        '200':
+          description: Nodes and Egdges
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/timelinehResponseItem'
+              
+        '400':
+          description: 'Bad Requst'
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'
+        
+        '500':
+          description: Internal Server error
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/error'        
+
+components:
+  schemas:
+    graphResponseItem:
+      type: object
+      required:
+        - nodes
+        - links
+      properties:
+        nodes:
+          type: object
+          properties:
+            count:
+              type: integer 
+            result:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: string
+                    example: "apex/vpn.ac"
+                  type:
+                    type: string
+                    example: "apex"
+        links:
+          type: object
+          properties:
+            count:
+              type: integer
+            result:
+              type: array
+              items:
+                type: object
+                properties:
+                  source:
+                    type: string
+                  target:
+                    type: string
+    timelinehResponseItem:
+      type: object
+      required:
+        - nodes
+        - links
+      properties:
+        data:
+            type: array
+            items:
+              type: object
+              properties:
+                nodes:
+                  type: object
+                  properties:
+                    count:
+                      type: integer
+                    result:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          id:
+                            type: string
+                            example: "apex/vpn.ac"
+                links:
+                  type: object
+                  properties:
+                    count:
+                      type: integer
+                    result:
+                      type: array
+                      items:
+                        type: object
+                        properties:
+                          source:
+                            type: string
+                          target:
+                            type: string
+    error:
+      required:
+        - code
+        - error
+      properties:
+        code:
+          type: string
+          example: CAR-500
+        error:
+          type: string
+          example: error message
+      type: object
+      description: response for errors        
+    
